@@ -19,7 +19,7 @@
 :root {
   --primary: #E66E0A;
   --primary-dark: #C45C05;
-  --bg: #F5F6FA;
+  --bg: #FFF3E6; /* Naranja super bajo */
   --bg-sidebar: #FFFFFF;
   --white: #FFFFFF;
   --green: #27AE60;
@@ -29,8 +29,8 @@
   --text: #2D3436;
   --text-muted: #636E72;
   --border: #E0E4EA;
-  --shadow: 12px 12px 25px rgba(0, 0, 0, 0.15), -5px -5px 15px rgba(255, 255, 255, 0.7);
-  --shadow-hover: 15px 15px 30px rgba(230, 110, 10, 0.2);
+  --shadow: 0 0 25px rgba(0, 0, 0, 0.12); /* Sombra uniforme alrededor */
+  --shadow-hover: 0 0 35px rgba(230, 110, 10, 0.25);
   --radius: 16px;
 }
 
@@ -287,6 +287,10 @@ body {
   justify-content: center;
   gap: 1.5rem;
   align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+.visual-widget:hover {
+  box-shadow: var(--shadow-hover);
 }
 .widget-title {
   font-size: 1.1rem;
