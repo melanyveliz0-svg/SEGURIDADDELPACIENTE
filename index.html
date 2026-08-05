@@ -71,11 +71,14 @@ body {
 .site-header__inner {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  justify-content: center;
+  width: 100%;
   position: relative;
   z-index: 2;
 }
 .header-logo {
+  position: absolute;
+  left: 20px;
   height: 60px;
   background-color: #ffffff;
   padding: 8px 15px;
@@ -93,6 +96,8 @@ body {
 .header-titles {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 .site-header h1 {
   font-size: 2.8rem; font-weight: 900; color: #fff;
@@ -265,7 +270,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  align-items: center;
+  align-items: stretch;
 }
 .visual-widget {
   background: var(--white);
@@ -407,7 +412,11 @@ body {
   <section class="main-content">
     
     <div id="welcome-message" class="welcome-box">
-      <p>Seleccione un documento de la lista para comenzar el análisis.</p>
+      <h2 style="color: #34495E; margin-bottom: 1rem;">Línea de Tiempo de Documentación</h2>
+      <p style="color: #7F8C8D; margin-bottom: 2rem;">Evolución temporal del ingreso de documentos al Sistema de Gestión de Calidad.</p>
+      <div style="position: relative; height: 350px; width: 100%;">
+        <canvas id="timelineChart"></canvas>
+      </div>
     </div>
     <!-- MAIN DASHBOARD DATA -->
     <div id="dashboard-data" class="dashboard-data hidden">
@@ -753,7 +762,9 @@ Chart.defaults.color = '#636E72';
 // Variables de estado
 let currentDoc = null;
 let charts = {
-    status: null
+    status: null,
+    pie: null,
+    timeline: null
 };
 // Referencias DOM
 const docSelectEl = document.getElementById('document-select');
@@ -791,6 +802,7 @@ const AREA_ICONS = {
 function init() {
     renderDocList();
     renderGlobalChart();
+    renderTimelineChart();
 }
 
 function renderGlobalChart() {
@@ -805,7 +817,7 @@ function renderGlobalChart() {
     const colors = ['#3498DB', '#E74C3C', '#F1C40F', '#2ECC71', '#9B59B6', '#34495E'];
     
     const ctx = document.getElementById('typeChart').getContext('2d');
-    new Chart(ctx, {
+    charts.pie = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: labels,
@@ -824,6 +836,59 @@ function renderGlobalChart() {
                     position: 'bottom',
                     labels: { boxWidth: 12, font: { size: 10 } }
                 }
+            }
+        }
+    });
+}
+
+function renderTimelineChart() {
+    const timelineCounts = {};
+    SGCSP_DATA.forEach(doc => {
+        let fechaStr = doc.FECHA || '';
+        if (fechaStr && fechaStr.includes('/')) {
+            const parts = fechaStr.split('/');
+            if (parts.length === 3) {
+                // mm/yyyy or dd/mm/yyyy. Assumes parts[1] is month, parts[2] is year.
+                let mes = parts[1].padStart(2, '0');
+                let anio = parts[2];
+                let key = `${anio}-${mes}`;
+                timelineCounts[key] = (timelineCounts[key] || 0) + 1;
+            }
+        }
+    });
+
+    const sortedKeys = Object.keys(timelineCounts).sort();
+    const data = sortedKeys.map(k => timelineCounts[k]);
+    
+    // Convert keys to readable labels (e.g. "05-2026")
+    const labels = sortedKeys.map(k => {
+        let [y, m] = k.split('-');
+        return `${m}/${y}`;
+    });
+
+    const ctx = document.getElementById('timelineChart').getContext('2d');
+    charts.timeline = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Documentos Registrados',
+                data: data,
+                borderColor: '#3498DB',
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: '#2980B9'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 } }
             }
         }
     });
@@ -852,6 +917,27 @@ function selectDocument(index) {
     dashboardDataEl.classList.remove('hidden');
 
     updateUI();
+    highlightPieChart(currentDoc);
+}
+
+function highlightPieChart(doc) {
+    if (!charts.pie) return;
+    const type = (doc.DOCUMENTO || 'OTRO').trim().toUpperCase();
+    const ds = charts.pie.data.datasets[0];
+    const originalColors = ['#3498DB', '#E74C3C', '#F1C40F', '#2ECC71', '#9B59B6', '#34495E'];
+    
+    // Mute all colors except the selected one
+    ds.backgroundColor = charts.pie.data.labels.map((label, idx) => {
+        const color = originalColors[idx % originalColors.length];
+        if (label === type) return color;
+        // Make non-selected colors very transparent/muted
+        return color.replace(')', ', 0.15)').replace('rgb', 'rgba').replace(/^#([0-9a-f]{6})$/i, (m, c) => {
+            let r = parseInt(c.slice(0,2), 16), g = parseInt(c.slice(2,4), 16), b = parseInt(c.slice(4,6), 16);
+            return `rgba(${r},${g},${b},0.15)`;
+        });
+    });
+    
+    charts.pie.update();
 }
 
 function updateUI() {
