@@ -222,6 +222,33 @@ body {
 .kpi-card__value.yellow { color: var(--yellow); }
 .kpi-card__value.blue { color: var(--blue); }
 
+/* CALENDAR DATE */
+.calendar-date {
+  display: inline-block;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  min-width: 110px;
+  margin-top: 5px;
+}
+.cal-month-year {
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+.cal-day {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text);
+  padding: 8px 0;
+  line-height: 1;
+}
+
 /* CHARTS GRID */
 .charts-grid {
   display: grid;
@@ -315,7 +342,10 @@ body {
       <div class="kpi-row">
         <div class="kpi-card">
           <div class="kpi-card__label">Fecha de Actualización</div>
-          <div class="kpi-card__value" id="kpi-fecha">--</div>
+          <div class="calendar-date" id="kpi-fecha">
+            <div class="cal-month-year" id="cal-month-year">--</div>
+            <div class="cal-day" id="cal-day">--</div>
+          </div>
         </div>
         <div class="kpi-card">
           <div class="kpi-card__label">Anexos</div>
@@ -666,7 +696,8 @@ const welcomeMsgEl = document.getElementById('welcome-message');
 const dashboardDataEl = document.getElementById('dashboard-data');
 const docTitleEl = document.getElementById('doc-title');
 const docAreaBadgeEl = document.getElementById('doc-area-badge');
-const kpiFechaEl = document.getElementById('kpi-fecha');
+const calMonthYearEl = document.getElementById('cal-month-year');
+const calDayEl = document.getElementById('cal-day');
 const kpiAnexosEl = document.getElementById('kpi-anexos');
 const kpiEstadoEl = document.getElementById('kpi-estado');
 
@@ -704,7 +735,27 @@ function updateUI() {
     // Actualizar Textos
     docTitleEl.textContent = currentDoc.DESCRIPCION || currentDoc.DOCUMENTO;
     docAreaBadgeEl.textContent = currentDoc.AREA || 'SIN ÁREA';
-    kpiFechaEl.textContent = currentDoc.FECHA || '--/--/----';
+    
+    // Configurar Calendario
+    const fecha = currentDoc.FECHA || '';
+    if (fecha && fecha.includes('/')) {
+        const parts = fecha.split('/');
+        if (parts.length === 3) {
+            const day = parts[0];
+            const monthIndex = parseInt(parts[1]) - 1;
+            const year = parts[2];
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            calMonthYearEl.textContent = `${months[monthIndex] || ''} ${year}`;
+            calDayEl.textContent = day;
+        } else {
+            calMonthYearEl.textContent = 'Fecha';
+            calDayEl.textContent = '--';
+        }
+    } else {
+        calMonthYearEl.textContent = 'Sin Fecha';
+        calDayEl.textContent = '--';
+    }
+
     kpiAnexosEl.textContent = currentDoc.ANEXOS || '0';
     
     // Colores por Estado
