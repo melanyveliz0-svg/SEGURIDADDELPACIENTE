@@ -448,6 +448,7 @@ body {
         <!-- 3. ESTADO (Velocímetro) -->
         <div class="visual-widget gauge-widget">
           <h3 class="widget-title">Estado Actual</h3>
+          <h4 id="status-text-display" style="font-size: 1.4rem; margin: 5px 0 15px 0; font-weight: 800; letter-spacing: 1px;">--</h4>
           <div class="chart-wrapper">
             <canvas id="statusChart"></canvas>
           </div>
@@ -981,12 +982,16 @@ function updateUI() {
         }
     } else {
         calMonthYearEl.textContent = 'Sin Fecha';
-        calDayEl.textContent = '--';
+        document.getElementById('cal-month-year').textContent = '--';
+        document.getElementById('cal-day').textContent = '--';
     }
 
     kpiAnexosEl.textContent = currentDoc.ANEXOS || '0';
     
-    // Colores por Estado
+    // Status text update
+    const statusTextEl = document.getElementById('status-text-display');
+    
+    // Configurar Estado
     const estado = (currentDoc.ESTADO || '').trim().toUpperCase();
     
     const gaugeColors = ['#95A5A6', '#E74C3C', '#E67E22', '#F1C40F', '#3498DB', '#2ECC71', '#27AE60'];
@@ -1006,6 +1011,13 @@ function updateCharts(estado, score, gaugeColors) {
     destroyCharts();
 
     // 1. STATUS CHART (Gauge / Velocímetro)
+    
+    // Update the HTML text element
+    if (statusTextEl) {
+        statusTextEl.textContent = estado;
+        statusTextEl.style.color = gaugeColors[score - 1] || '#34495E';
+    }
+    
     // Configuración tipo Gauge usando un gráfico de dona a la mitad (180 grados)
     const gaugeData = [1, 1, 1, 1, 1, 1, 1]; // Siete secciones
     const mutedColors = ['#ECF0F1', '#FADBD8', '#FDEBD0', '#FEF9E7', '#D6EAF8', '#D5F5E3', '#A3E4D7'];
@@ -1034,7 +1046,7 @@ function updateCharts(estado, score, gaugeColors) {
             hover: { mode: null }, // Ensure hover is disabled
             events: [], // Disable hover events to fix zooming/jumping
             layout: {
-                padding: { bottom: 40 } // Space for the text below the gauge
+                padding: { bottom: 10 } // Reduced since text is no longer drawn on canvas
             },
             plugins: {
                 legend: { display: false },
@@ -1079,22 +1091,6 @@ function updateCharts(estado, score, gaugeColors) {
                 ctx.fillStyle = '#2C3E50';
                 ctx.fill();
                 
-                ctx.restore();
-                
-                // --- 2. DIBUJAR TEXTO ---
-                // Se dibuja DEBAJO de la base del velocímetro, en el espacio del padding
-                ctx.save();
-                var fontSize = (height / 80).toFixed(2);
-                if (fontSize < 1) fontSize = 1; // Min font size
-                ctx.font = "bold " + fontSize + "em Montserrat";
-                ctx.textBaseline = "top"; // Top alignment since we are putting it below
-                ctx.fillStyle = gaugeColors[score-1] || '#2D3436';
-                
-                var text = estado,
-                    textX = Math.round(centerX - (ctx.measureText(text).width / 2)),
-                    textY = centerY + 15; // 15px below the center
-                
-                ctx.fillText(text, textX, textY);
                 ctx.restore();
             }
         }]
