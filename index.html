@@ -993,15 +993,16 @@ function updateUI() {
     // Configurar Estado
     const estado = (currentDoc.ESTADO || '').trim().toUpperCase();
     
-    const gaugeColors = ['#95A5A6', '#E74C3C', '#E67E22', '#F1C40F', '#3498DB', '#2ECC71', '#27AE60'];
+    const gaugeColors = ['#95A5A6', '#E74C3C', '#E67E22', '#F1C40F', '#3498DB', '#85C1E9', '#2ECC71', '#27AE60'];
     let score = 1;
     if (estado === 'ASIGNADO') score = 1;
     else if (estado === 'PENDIENTE') score = 2;
     else if (estado === 'EN CURSO') score = 3;
     else if (estado === 'EN DEFINICIÓN' || estado === 'EN DEFINICION') score = 4;
-    else if (estado === 'EN APROBACIÓN' || estado === 'EN APROBACION') score = 5;
-    else if (estado === 'APROBADO') score = 6;
-    else if (estado === 'FINALIZADO') score = 7;
+    else if (estado === 'EN REVISIÓN' || estado === 'EN REVISION') score = 5;
+    else if (estado === 'EN APROBACIÓN' || estado === 'EN APROBACION') score = 6;
+    else if (estado === 'APROBADO') score = 7;
+    else if (estado === 'FINALIZADO') score = 8;
     
     updateCharts(estado, score, gaugeColors);
 }
@@ -1019,8 +1020,8 @@ function updateCharts(estado, score, gaugeColors) {
     }
     
     // Configuración tipo Gauge usando un gráfico de dona a la mitad (180 grados)
-    const gaugeData = [1, 1, 1, 1, 1, 1, 1]; // Siete secciones
-    const mutedColors = ['#ECF0F1', '#FADBD8', '#FDEBD0', '#FEF9E7', '#D6EAF8', '#D5F5E3', '#A3E4D7'];
+    const gaugeData = [1, 1, 1, 1, 1, 1, 1, 1]; // Ocho secciones
+    const mutedColors = ['#ECF0F1', '#FADBD8', '#FDEBD0', '#FEF9E7', '#EBF5FB', '#E8F8F5', '#D5F5E3', '#A3E4D7'];
     
     // Resaltar la sección correspondiente al estado
     const backgroundColors = gaugeData.map((_, i) => (i === score - 1) ? gaugeColors[i] : mutedColors[i]);
@@ -1029,7 +1030,7 @@ function updateCharts(estado, score, gaugeColors) {
     charts.status = new Chart(ctxStatus, {
         type: 'doughnut',
         data: {
-            labels: ['ASIGNADO', 'PENDIENTE', 'EN CURSO', 'EN DEFINICIÓN', 'EN APROBACIÓN', 'APROBADO', 'FINALIZADO'],
+            labels: ['ASIGNADO', 'PENDIENTE', 'EN CURSO', 'EN DEFINICIÓN', 'EN REVISIÓN', 'EN APROBACIÓN', 'APROBADO', 'FINALIZADO'],
             datasets: [{
                 data: gaugeData,
                 backgroundColor: backgroundColors,
@@ -1068,7 +1069,7 @@ function updateCharts(estado, score, gaugeColors) {
                 var centerY = chartArea.bottom; // Centro del arco (base)
                 
                 // Total angle is 180 degrees (from -PI to 0).
-                var sectionAngle = Math.PI / 7;
+                var sectionAngle = Math.PI / 8;
                 var angle = -Math.PI + (sectionAngle * (score - 1)) + (sectionAngle / 2);
                 
                 var needleRadius = height * 0.55; // Aguja un poco más larga
