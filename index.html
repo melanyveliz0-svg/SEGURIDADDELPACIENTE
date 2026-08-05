@@ -219,19 +219,36 @@ body {
   color: var(--primary-dark);
   margin-bottom: 1rem;
 }
-.doc-area-container {
+.doc-areas-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.doc-area-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  background: rgba(52, 152, 219, 0.1);
-  padding: 0.75rem 1.5rem;
+  gap: 0.6rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 50px;
-  color: #2980B9;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  color: #fff;
 }
-.doc-area-container i {
-  font-size: 1.2rem;
+.doc-area-badge.area-clinico { background: #3498DB; } /* Blue */
+.doc-area-badge.area-mantenimiento { background: #8D6E63; } /* Brown */
+.doc-area-badge.area-servicios { background: #00B894; } /* Green */
+.doc-area-badge.area-admin { background: #F39C12; } /* Orange */
+.doc-area-badge.area-farmacia { background: #9B59B6; } /* Purple */
+.doc-area-badge.area-laboratorio { background: #E74C3C; } /* Red */
+.doc-area-badge.area-enfermeria { background: #FF7675; } /* Pink */
+.doc-area-badge.area-calidad { background: #FDCB6E; color: #2D3436; } /* Yellow */
+.doc-area-badge.area-default { background: #95A5A6; } /* Gray */
+
+.doc-area-badge i {
+  font-size: 1.1rem;
 }
 
 /* VISUALS GRID (Calendar, Circle, Gauge) */
@@ -380,9 +397,8 @@ body {
       
       <div class="doc-header">
         <h2 id="doc-title" class="doc-title">Cargando...</h2>
-        <div class="doc-area-container">
-          <i id="doc-area-icon" class="fa-solid fa-building"></i>
-          <span id="doc-area-badge" class="doc-area-badge">Cargando Área...</span>
+        <div id="doc-area-container" class="doc-areas-wrapper">
+          <!-- JS injects badges here -->
         </div>
       </div>
 
@@ -727,28 +743,31 @@ const docSelectEl = document.getElementById('document-select');
 const welcomeMsgEl = document.getElementById('welcome-message');
 const dashboardDataEl = document.getElementById('dashboard-data');
 const docTitleEl = document.getElementById('doc-title');
-const docAreaBadgeEl = document.getElementById('doc-area-badge');
-const docAreaIconEl = document.getElementById('doc-area-icon');
+const docAreaContainer = document.getElementById('doc-area-container');
 const calMonthYearEl = document.getElementById('cal-month-year');
 const calDayEl = document.getElementById('cal-day');
 const kpiAnexosEl = document.getElementById('kpi-anexos');
 
 
 
-// Área a Ícono
+// Área a Ícono y Clase CSS
 const AREA_ICONS = {
-    'CLÍNICA': 'fa-stethoscope',
-    'CLINICA': 'fa-stethoscope',
-    'MANTENIMIENTO': 'fa-wrench',
-    'SERVICIOS GENERALES': 'fa-broom',
-    'ADMINISTRACIÓN': 'fa-briefcase',
-    'ADMINISTRACION': 'fa-briefcase',
-    'FARMACIA': 'fa-pills',
-    'LABORATORIO': 'fa-flask',
-    'ENFERMERÍA': 'fa-user-nurse',
-    'ENFERMERIA': 'fa-user-nurse',
-    'CALIDAD': 'fa-medal',
-    'SEGURIDAD DEL PACIENTE': 'fa-shield-heart'
+    'CLÍNICA': { icon: 'fa-stethoscope', css: 'area-clinico' },
+    'CLINICA': { icon: 'fa-stethoscope', css: 'area-clinico' },
+    'CLÍNICO': { icon: 'fa-stethoscope', css: 'area-clinico' },
+    'CLINICO': { icon: 'fa-stethoscope', css: 'area-clinico' },
+    'MANTENIMIENTO': { icon: 'fa-wrench', css: 'area-mantenimiento' },
+    'SERVICIOS GENERALES': { icon: 'fa-broom', css: 'area-servicios' },
+    'ADMINISTRACIÓN': { icon: 'fa-briefcase', css: 'area-admin' },
+    'ADMINISTRACION': { icon: 'fa-briefcase', css: 'area-admin' },
+    'FARMACIA': { icon: 'fa-pills', css: 'area-farmacia' },
+    'LABORATORIO': { icon: 'fa-flask', css: 'area-laboratorio' },
+    'ENFERMERÍA': { icon: 'fa-user-nurse', css: 'area-enfermeria' },
+    'ENFERMERIA': { icon: 'fa-user-nurse', css: 'area-enfermeria' },
+    'CALIDAD': { icon: 'fa-medal', css: 'area-calidad' },
+    'SEGURIDAD DEL PACIENTE': { icon: 'fa-shield-heart', css: 'area-calidad' },
+    'COMERCIAL': { icon: 'fa-handshake', css: 'area-admin' },
+    'TODAS': { icon: 'fa-users', css: 'area-default' }
 };
 
 // Inicializar la aplicación
@@ -782,19 +801,31 @@ function selectDocument(index) {
 }
 
 function updateUI() {
-    // Update Title & Area Icon
+    // Update Title & Area Icons
     docTitleEl.textContent = currentDoc.DESCRIPCION || currentDoc.DOCUMENTO;
-    const area = (currentDoc.AREA || 'SIN ÁREA').trim();
-    docAreaBadgeEl.textContent = area;
+    const areaString = (currentDoc.AREA || 'SIN ÁREA').trim();
     
-    let iconClass = 'fa-building'; // default
-    for (const [key, icon] of Object.entries(AREA_ICONS)) {
-        if (area.toUpperCase().includes(key)) {
-            iconClass = icon;
-            break;
+    // Separar áreas por coma o " Y "
+    const areaList = areaString.split(/,| Y /i).map(a => a.trim()).filter(a => a.length > 0);
+    docAreaContainer.innerHTML = ''; // Limpiar contenedor
+    
+    areaList.forEach(areaName => {
+        let iconClass = 'fa-building';
+        let cssClass = 'area-default';
+        
+        for (const [key, config] of Object.entries(AREA_ICONS)) {
+            if (areaName.toUpperCase().includes(key)) {
+                iconClass = config.icon;
+                cssClass = config.css;
+                break;
+            }
         }
-    }
-    docAreaIconEl.className = `fa-solid ${iconClass}`;
+        
+        const badge = document.createElement('span');
+        badge.className = `doc-area-badge ${cssClass}`;
+        badge.innerHTML = `<i class="fa-solid ${iconClass}"></i> ${areaName.toUpperCase()}`;
+        docAreaContainer.appendChild(badge);
+    });
     
     // Configurar Calendario
     const fecha = currentDoc.FECHA || '';
@@ -892,7 +923,7 @@ function updateCharts(estado, score, gaugeColors) {
                 
                 var text = estado,
                     textX = Math.round((width - ctx.measureText(text).width) / 2),
-                    textY = height / 1.5;
+                    textY = height / 1.15; // Bajado para no tapar el arco
                 
                 ctx.fillText(text, textX, textY);
                 ctx.save();
