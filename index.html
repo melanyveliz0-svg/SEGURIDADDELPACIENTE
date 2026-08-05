@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard SGCSP - Monitoreo de Actividades</title>
-<meta name="description" content="Dashboard de Monitoreo de Actividades - Sistema de GestiÃ³n de la Calidad en la seguridad del Paciente. Grupo Hospitalario Kennedy.">
+<meta name="description" content="Dashboard de Monitoreo de Actividades - Sistema de Gestión de la Calidad en la seguridad del Paciente. Grupo Hospitalario Kennedy.">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
@@ -270,7 +270,7 @@ body {
   <div class="site-header__layout">
     <div class="site-header__inner">
       <span class="site-header__badge">Dashboard</span>
-      <h1>Monitoreo de Actividades - Sistema de GestiÃ³n de la Calidad en la seguridad del Paciente</h1>
+      <h1>Monitoreo de Actividades - Sistema de Gestión de la Calidad en la seguridad del Paciente</h1>
       <p class="subtitle">Grupo Hospitalario Kennedy</p>
     </div>
   </div>
@@ -280,12 +280,12 @@ body {
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <h2>DocumentaciÃ³n</h2>
+      <h2>Documentación</h2>
       <p>Seleccione un documento para visualizar sus detalles.</p>
     </div>
     <div class="sidebar-content">
       <ul id="document-list" class="doc-list">
-        <!-- Generado dinÃ¡micamente -->
+        <!-- Generado dinámicamente -->
       </ul>
     </div>
   </aside>
@@ -294,19 +294,19 @@ body {
   <section class="main-content">
     
     <div id="welcome-message" class="welcome-box">
-      <p>Seleccione un documento de la lista para comenzar el anÃ¡lisis.</p>
+      <p>Seleccione un documento de la lista para comenzar el análisis.</p>
     </div>
 
     <div id="dashboard-data" class="dashboard-data hidden fade">
       <div class="content-header">
-        <span id="doc-area-badge" class="meta-badge">ÃREA</span>
-        <h2 id="doc-title">TÃ­tulo del Documento</h2>
+        <span id="doc-area-badge" class="meta-badge">ÁREA</span>
+        <h2 id="doc-title">Título del Documento</h2>
       </div>
 
       <!-- KPIs -->
       <div class="kpi-row">
         <div class="kpi-card">
-          <div class="kpi-card__label">Fecha de ActualizaciÃ³n</div>
+          <div class="kpi-card__label">Fecha de Actualización</div>
           <div class="kpi-card__value" id="kpi-fecha">--</div>
         </div>
         <div class="kpi-card">
@@ -322,7 +322,7 @@ body {
       <!-- CHARTS -->
       <div class="charts-grid">
         <div class="chart-card timeline-card">
-          <h3>LÃ­nea de Tiempo - Fecha de ActualizaciÃ³n</h3>
+          <h3>Línea de Tiempo - Fecha de Actualización</h3>
           <div class="chart-wrapper">
              <canvas id="timelineChart"></canvas>
           </div>
@@ -336,7 +336,7 @@ body {
         </div>
 
         <div class="chart-card status-card">
-          <h3>Estado (VelocÃ­metro)</h3>
+          <h3>Estado (Velocímetro)</h3>
           <div class="chart-wrapper">
             <canvas id="statusChart"></canvas>
           </div>
@@ -350,202 +350,297 @@ body {
 <script>
 const SGCSP_DATA = [
     {
-        "AREA":  "IDENTIFICACIÓN DEL PACIENTE",
-        "ESTADO":  "23/3/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "1"
+        "ID":  "1",
+        "DESCRIPCION":  "IDENTIFICACIÓN DEL PACIENTE",
+        "FECHA":  "23/3/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "1",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "INFRAESTRUCTURA Y EQUIPAMIENTO",
-        "ESTADO":  "23/3/2026",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "2"
+        "ID":  "2",
+        "DESCRIPCION":  "INFRAESTRUCTURA Y EQUIPAMIENTO",
+        "FECHA":  "23/3/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "20",
+        "AREA":  "MANTENIMIENTO"
     },
     {
-        "AREA":  "ABREVIATURA PELIGROSAS",
-        "ESTADO":  "9/5/2018",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "3"
+        "ID":  "3",
+        "DESCRIPCION":  "ABREVIATURA PELIGROSAS",
+        "FECHA":  "9/5/2018",
+        "ESTADO":  "EN REVISIÓN",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "3",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "MANEJO DE MEDICAMENTOS DE ALTO RIESGO",
-        "ESTADO":  "17/9/2025",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "4"
+        "ID":  "4",
+        "DESCRIPCION":  "MANEJO DE MEDICAMENTOS DE ALTO RIESGO",
+        "FECHA":  "17/9/2025",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "4",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "MANEJO DE ELECTROLITOS CONCENTRADOS",
-        "ESTADO":  "18/10/2024",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "5"
+        "ID":  "5",
+        "DESCRIPCION":  "MANEJO DE ELECTROLITOS CONCENTRADOS",
+        "FECHA":  "18/10/2024",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "3",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "CONCILIACIÓN DE MEDICAMENTOS",
-        "ESTADO":  "7/6/2024",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "6"
+        "ID":  "6",
+        "DESCRIPCION":  "CONCILIACIÓN DE MEDICAMENTOS",
+        "FECHA":  "7/6/2024",
+        "ESTADO":  "APROBADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "0",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "ADMINISTRACIÓN DE MEDICAMENTOS",
-        "ESTADO":  "30/10/2025",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "7"
+        "ID":  "7",
+        "DESCRIPCION":  "ADMINISTRACIÓN DE MEDICAMENTOS",
+        "FECHA":  "30/10/2025",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "13",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "GPC PROFILAXIS ANTIBIOTICA EN CIRUGIA",
-        "ESTADO":  "9/5/2018",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "8"
+        "ID":  "8",
+        "DESCRIPCION":  "GPC PROFILAXIS ANTIBIOTICA EN CIRUGIA",
+        "FECHA":  "9/5/2018",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "0",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "PROFILAXIS DE TROMBO EMBOLISMO VENOSO",
-        "ESTADO":  "29/4/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "9"
+        "ID":  "9",
+        "DESCRIPCION":  "PROFILAXIS DE TROMBO EMBOLISMO VENOSO",
+        "FECHA":  "29/4/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "2",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "PROTOCOLO DE LESIONES POR PRESION",
-        "ESTADO":  "4/5/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "10"
+        "ID":  "10",
+        "DESCRIPCION":  "PROTOCOLO DE LESIONES POR PRESION",
+        "FECHA":  "4/5/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "3",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "NOTIFICACIÓN DE EVENTOS",
-        "ESTADO":  "4/5/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "11"
+        "ID":  "11",
+        "DESCRIPCION":  "NOTIFICACIÓN DE EVENTOS",
+        "FECHA":  "4/5/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "9",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "ATENCIÓN A PACIENTES EN EL CENTRO QUIRÚRGICO",
-        "ESTADO":  "11/5/2026",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "12"
+        "ID":  "12",
+        "DESCRIPCION":  "ATENCIÓN A PACIENTES EN EL CENTRO QUIRÚRGICO",
+        "FECHA":  "11/5/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "33",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "TRANSFERENCIA INTERNA DE PACIENTES",
-        "ESTADO":  "28/7/2025",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "13"
+        "ID":  "13",
+        "DESCRIPCION":  "TRANSFERENCIA INTERNA DE PACIENTES",
+        "FECHA":  "28/7/2025",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "3",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "MANEJO CORRECTO DE BOMBAS DE INFUSIÓN",
-        "ESTADO":  "21/12/2018",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "14"
+        "ID":  "14",
+        "DESCRIPCION":  "MANEJO CORRECTO DE BOMBAS DE INFUSIÓN",
+        "FECHA":  "21/12/2018",
+        "ESTADO":  "EN REVISIÓN",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "0",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "HIGIENE DE MANOS",
-        "ESTADO":  "4/9/2025",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "15"
+        "ID":  "15",
+        "DESCRIPCION":  "HIGIENE DE MANOS",
+        "FECHA":  "4/9/2025",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "7",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "PREVENCIÓN DE CAÍDAS",
-        "ESTADO":  "28/4/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "16"
+        "ID":  "16",
+        "DESCRIPCION":  "PREVENCIÓN DE CAÍDAS",
+        "FECHA":  "28/4/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "2",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "EDUCACIÓN EN SEGURIDAD DEL PACIENTE",
-        "ESTADO":  "25/3/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "17"
+        "ID":  "17",
+        "DESCRIPCION":  "EDUCACIÓN EN SEGURIDAD DEL PACIENTE",
+        "FECHA":  "25/3/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "2",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "PROTOCOLO 053 REFERENCIA CONTRAREFERENCIA",
-        "ESTADO":  "28/7/2025",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "18"
+        "ID":  "18",
+        "DESCRIPCION":  "PROTOCOLO 053 REFERENCIA CONTRAREFERENCIA",
+        "FECHA":  "28/7/2025",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "2",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "CONSENTIMIENTO INFORMADO",
-        "ESTADO":  "25/3/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "19"
+        "ID":  "19",
+        "DESCRIPCION":  "CONSENTIMIENTO INFORMADO",
+        "FECHA":  "25/3/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "2",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "NORMAS CONE",
-        "ESTADO":  "4/5/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "20"
+        "ID":  "20",
+        "DESCRIPCION":  "NORMAS CONE",
+        "FECHA":  "4/5/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "0",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "LIMPIEZA Y DESINFECCION DE EQUIPOS Y MOBILIARIOS",
-        "ESTADO":  "29/4/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "21"
+        "ID":  "21",
+        "DESCRIPCION":  "LIMPIEZA Y DESINFECCION DE EQUIPOS Y MOBILIARIOS",
+        "FECHA":  "29/4/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "10",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "SCORE MAMÁ",
-        "ESTADO":  "6/5/2026",
-        "ANEXOS":  "PROTOCOLO",
-        "INTRANET\"":  "22"
+        "ID":  "22",
+        "DESCRIPCION":  "SCORE MAMÁ",
+        "FECHA":  "6/5/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "PROTOCOLO",
+        "ANEXOS":  "22",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "ATENCIÓN A PACIENTES EN EMERGENCIA",
-        "ESTADO":  "29/4/2026",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "23"
+        "ID":  "23",
+        "DESCRIPCION":  "ATENCIÓN A PACIENTES EN EMERGENCIA",
+        "FECHA":  "29/4/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "46",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "ATENCIÓN A PACIENTES EN HOSPITALIZACIÓN",
-        "ESTADO":  "29/7/2019",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "24"
+        "ID":  "24",
+        "DESCRIPCION":  "ATENCIÓN A PACIENTES EN HOSPITALIZACIÓN",
+        "FECHA":  "29/7/2019",
+        "ESTADO":  "EN REVISIÓN",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "41",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "CONTROL DE DOCUMENTOS Y DE REGISTROS",
-        "ESTADO":  "16/1/2024",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "25"
+        "ID":  "25",
+        "DESCRIPCION":  "CONTROL DE DOCUMENTOS Y DE REGISTROS",
+        "FECHA":  "16/1/2024",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "5",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "AUTORIZACIONES Y PROGRAMACIÓN DE PACIENTES RPIS",
-        "ESTADO":  "30/10/2018",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "26"
+        "ID":  "26",
+        "DESCRIPCION":  "AUTORIZACIONES Y PROGRAMACIÓN DE PACIENTES RPIS",
+        "FECHA":  "30/10/2018",
+        "ESTADO":  "APROBADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "16",
+        "AREA":  "CLÍNICA"
     },
     {
-        "AREA":  "MEDICIÓN DE LA SATISFACCION",
-        "ESTADO":  "29/4/2026",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "27"
+        "ID":  "27",
+        "DESCRIPCION":  "MEDICIÓN DE LA SATISFACCION",
+        "FECHA":  "29/4/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "6",
+        "AREA":  "COMERCIAL"
     },
     {
-        "AREA":  "SERVICIOS DE ESTERILIZACIÓN",
-        "ESTADO":  "6/5/2026",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "28"
+        "ID":  "28",
+        "DESCRIPCION":  "SERVICIOS DE ESTERILIZACIÓN",
+        "FECHA":  "6/5/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "10",
+        "AREA":  "ENFERMERÍA-CIRUGÍA"
     },
     {
-        "AREA":  "DESECHOS HOSPITALARIOS",
-        "ESTADO":  "8/7/2026",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "29"
+        "ID":  "29",
+        "DESCRIPCION":  "DESECHOS HOSPITALARIOS",
+        "FECHA":  "8/7/2026",
+        "ESTADO":  "EN REVISIÓN",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "9",
+        "AREA":  "SERVICIOS GENERALES, MANTENIMIENTO Y CLÍNICO"
     },
     {
-        "AREA":  "EQUIPOS DE PROTECCIÓN PERSONAL",
-        "ESTADO":  "12/11/2025",
-        "ANEXOS":  "MANUAL DE PROCEDIMIENTOS",
-        "INTRANET\"":  "30"
+        "ID":  "30",
+        "DESCRIPCION":  "EQUIPOS DE PROTECCIÓN PERSONAL",
+        "FECHA":  "12/11/2025",
+        "ESTADO":  "EN DEFINICIÓN",
+        "DOCUMENTO":  "MANUAL DE PROCEDIMIENTOS",
+        "ANEXOS":  "13",
+        "AREA":  "TODAS"
     },
     {
-        "AREA":  "SISTEMA DE GESTIÓN DE LA CALIDAD DE ATENCIÓN, SEGURIDAD DEL PACIENTE Y MEJORA CONTINUA",
-        "ESTADO":  "6/4/2026",
-        "ANEXOS":  "MANUAL",
-        "INTRANET\"":  "31"
+        "ID":  "31",
+        "DESCRIPCION":  "SISTEMA DE GESTIÓN DE LA CALIDAD DE ATENCIÓN, SEGURIDAD DEL PACIENTE Y MEJORA CONTINUA",
+        "FECHA":  "6/4/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL",
+        "ANEXOS":  "0",
+        "AREA":  "TODAS"
     },
     {
-        "AREA":  "MANUAL DE BIOSEGURIDAD GHK",
-        "ESTADO":  "6/5/2026",
-        "ANEXOS":  "MANUAL",
-        "INTRANET\"":  "32"
+        "ID":  "32",
+        "DESCRIPCION":  "MANUAL DE BIOSEGURIDAD GHK",
+        "FECHA":  "6/5/2026",
+        "ESTADO":  "FINALIZADO",
+        "DOCUMENTO":  "MANUAL",
+        "ANEXOS":  "0",
+        "AREA":  "TODAS"
     }
 ];
-
 </script>
 <script>
-// ConfiguraciÃ³n global de Chart.js
+// Configuración global de Chart.js
 Chart.defaults.font.family = "'Montserrat', sans-serif";
 Chart.defaults.color = '#636E72';
 
@@ -567,7 +662,7 @@ const kpiFechaEl = document.getElementById('kpi-fecha');
 const kpiAnexosEl = document.getElementById('kpi-anexos');
 const kpiEstadoEl = document.getElementById('kpi-estado');
 
-// Inicializar la aplicaciÃ³n
+// Inicializar la aplicación
 function init() {
     renderDocList();
 }
@@ -601,7 +696,7 @@ function selectDocument(index, element) {
 function updateUI() {
     // Actualizar Textos
     docTitleEl.textContent = currentDoc.DESCRIPCION || currentDoc.DOCUMENTO;
-    docAreaBadgeEl.textContent = currentDoc.AREA || 'SIN ÃREA';
+    docAreaBadgeEl.textContent = currentDoc.AREA || 'SIN ÁREA';
     kpiFechaEl.textContent = currentDoc.FECHA || '--/--/----';
     kpiAnexosEl.textContent = currentDoc.ANEXOS || '0';
     
@@ -612,7 +707,7 @@ function updateUI() {
     
     if (estado === 'FINALIZADO' || estado === 'APROBADO') {
         kpiEstadoEl.classList.add('green');
-    } else if (estado === 'EN REVISIÃ“N') {
+    } else if (estado === 'EN REVISIÓN') {
         kpiEstadoEl.classList.add('yellow');
     } else {
         kpiEstadoEl.classList.add('red');
@@ -624,9 +719,9 @@ function updateUI() {
 function updateCharts(estado, anexos, fechaStr) {
     destroyCharts();
 
-    // 1. TIMELINE CHART (LÃ­nea de tiempo)
-    // Convertir fecha a timestamp aproximado para el grÃ¡fico
-    // Formato tÃ­pico en el CSV: 23/3/2026
+    // 1. TIMELINE CHART (Línea de tiempo)
+    // Convertir fecha a timestamp aproximado para el gráfico
+    // Formato típico en el CSV: 23/3/2026
     let year = new Date().getFullYear();
     let month = 0;
     if(fechaStr && fechaStr.includes('/')) {
@@ -640,9 +735,9 @@ function updateCharts(estado, anexos, fechaStr) {
     charts.timeline = new Chart(ctxTimeline, {
         type: 'bar',
         data: {
-            labels: ['ActualizaciÃ³n'],
+            labels: ['Actualización'],
             datasets: [{
-                label: 'AÃ±o de ActualizaciÃ³n',
+                label: 'Año de Actualización',
                 data: [year],
                 backgroundColor: '#3498DB',
                 borderRadius: 8,
@@ -672,7 +767,7 @@ function updateCharts(estado, anexos, fechaStr) {
         }
     });
 
-    // 2. ANNEXES CHART (GrÃ¡fico de barras)
+    // 2. ANNEXES CHART (Gráfico de barras)
     const ctxAnnexes = document.getElementById('annexesChart').getContext('2d');
     charts.annexes = new Chart(ctxAnnexes, {
         type: 'bar',
@@ -700,25 +795,25 @@ function updateCharts(estado, anexos, fechaStr) {
         }
     });
 
-    // 3. STATUS CHART (Gauge / VelocÃ­metro)
-    // ConfiguraciÃ³n tipo Gauge usando un grÃ¡fico de dona a la mitad (180 grados)
+    // 3. STATUS CHART (Gauge / Velocímetro)
+    // Configuración tipo Gauge usando un gráfico de dona a la mitad (180 grados)
     let score = 0;
     if (estado === 'FINALIZADO' || estado === 'APROBADO') score = 3;
-    else if (estado === 'EN REVISIÃ“N') score = 2;
+    else if (estado === 'EN REVISIÓN') score = 2;
     else score = 1;
 
     const gaugeData = [1, 1, 1]; // Tres secciones: Rojo, Amarillo, Verde
     const gaugeColors = ['#E74C3C', '#F1C40F', '#27AE60'];
     const mutedColors = ['#fadbd8', '#fcf3cf', '#d5f5e3'];
     
-    // Resaltar la secciÃ³n correspondiente al estado
+    // Resaltar la sección correspondiente al estado
     const backgroundColors = gaugeData.map((_, i) => (i === score - 1) ? gaugeColors[i] : mutedColors[i]);
 
     const ctxStatus = document.getElementById('statusChart').getContext('2d');
     charts.status = new Chart(ctxStatus, {
         type: 'doughnut',
         data: {
-            labels: ['Pendiente', 'En RevisiÃ³n', 'Aprobado/Finalizado'],
+            labels: ['Pendiente', 'En Revisión', 'Aprobado/Finalizado'],
             datasets: [{
                 data: gaugeData,
                 backgroundColor: backgroundColors,
