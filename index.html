@@ -29,8 +29,8 @@
   --text: #2D3436;
   --text-muted: #636E72;
   --border: #E0E4EA;
-  --shadow: 0 4px 20px rgba(0, 0, 0, .05);
-  --shadow-hover: 0 8px 30px rgba(230, 110, 10, .15);
+  --shadow: 12px 12px 25px rgba(0, 0, 0, 0.15), -5px -5px 15px rgba(255, 255, 255, 0.7);
+  --shadow-hover: 15px 15px 30px rgba(230, 110, 10, 0.2);
   --radius: 16px;
 }
 
@@ -72,13 +72,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 3rem;
   width: 100%;
   position: relative;
   z-index: 2;
 }
 .header-logo {
-  position: absolute;
-  left: 20px;
   height: 90px;
   background-color: #ffffff;
   padding: 12px 20px;
@@ -280,7 +279,7 @@ body {
   padding: 2rem 1.5rem;
   box-shadow: var(--shadow);
   text-align: center;
-  border: 1px solid var(--border);
+  border: none;
   aspect-ratio: auto;
   height: 320px; /* Fixed height for uniformity */
   display: flex;
