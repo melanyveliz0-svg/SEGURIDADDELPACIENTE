@@ -49,7 +49,7 @@ body {
 
 /* HEADER */
 .site-header {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2019 40%, #1a1a1a 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   padding: 1.5rem 2.5rem;
   position: relative;
   overflow: hidden;
@@ -77,12 +77,16 @@ body {
   box-shadow: 0 2px 12px rgba(230,110,10,.3);
 }
 .site-header h1 {
-  font-size: 1.6rem; font-weight: 800; color: #fff;
-  letter-spacing: .5px; line-height: 1.35; margin-bottom: .4rem;
+  font-size: 1.8rem; font-weight: 900; color: #fff;
+  letter-spacing: .5px; line-height: 1.2; margin-bottom: .2rem;
+}
+.sub-heading {
+  font-size: 1.1rem; color: rgba(255,255,255,.9); font-weight: 600; 
+  margin-bottom: .6rem; letter-spacing: 0.5px;
 }
 .subtitle {
-  font-size: .9rem; color: rgba(255,255,255,.7);
-  font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  font-size: .85rem; color: rgba(255,255,255,.75);
+  font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
 }
 
 /* LAYOUT: SIDEBAR + MAIN */
@@ -126,27 +130,22 @@ body {
   overflow-y: auto;
   padding: 1rem 0;
 }
-.doc-list {
-  list-style: none;
-}
-.doc-item {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f0f2f5;
+.doc-select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
+  background-color: var(--white);
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.doc-item:hover {
-  background: #fef5ef;
-  color: var(--primary-dark);
-  padding-left: 2rem;
-}
-.doc-item.active {
-  background: var(--primary);
-  color: #fff;
-  border-left: 4px solid var(--primary-dark);
+.doc-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(230, 110, 10, 0.1);
 }
 
 /* MAIN CONTENT */
@@ -270,7 +269,8 @@ body {
   <div class="site-header__layout">
     <div class="site-header__inner">
       <span class="site-header__badge">Dashboard</span>
-      <h1>Monitoreo de Actividades - Sistema de Gestión de la Calidad en la seguridad del Paciente</h1>
+      <h1>Monitoreo de Actividades</h1>
+      <h2 class="sub-heading">Sistema de Gestión de la Calidad en la Seguridad del Paciente</h2>
       <p class="subtitle">Grupo Hospitalario Kennedy</p>
     </div>
   </div>
@@ -284,9 +284,9 @@ body {
       <p>Seleccione un documento para visualizar sus detalles.</p>
     </div>
     <div class="sidebar-content">
-      <ul id="document-list" class="doc-list">
-        <!-- Generado dinámicamente -->
-      </ul>
+      <select id="document-select" class="doc-select">
+        <option value="" disabled selected>Seleccione un documento...</option>
+      </select>
     </div>
   </aside>
 
@@ -653,7 +653,7 @@ let charts = {
 };
 
 // Referencias DOM
-const docListEl = document.getElementById('document-list');
+const docSelectEl = document.getElementById('document-select');
 const welcomeMsgEl = document.getElementById('welcome-message');
 const dashboardDataEl = document.getElementById('dashboard-data');
 const docTitleEl = document.getElementById('doc-title');
@@ -668,22 +668,21 @@ function init() {
 }
 
 function renderDocList() {
-    docListEl.innerHTML = '';
     SGCSP_DATA.forEach((doc, index) => {
-        const li = document.createElement('li');
-        li.className = 'doc-item';
-        li.textContent = doc.DESCRIPCION || doc.DOCUMENTO;
-        li.dataset.index = index;
-        li.addEventListener('click', () => selectDocument(index, li));
-        docListEl.appendChild(li);
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = doc.DESCRIPCION || doc.DOCUMENTO;
+        docSelectEl.appendChild(option);
+    });
+    
+    docSelectEl.addEventListener('change', (e) => {
+        if (e.target.value !== "") {
+            selectDocument(e.target.value);
+        }
     });
 }
 
-function selectDocument(index, element) {
-    // Manejar clases activas
-    document.querySelectorAll('.doc-item').forEach(el => el.classList.remove('active'));
-    if (element) element.classList.add('active');
-
+function selectDocument(index) {
     currentDoc = SGCSP_DATA[index];
     
     // Ocultar bienvenida y mostrar datos
@@ -767,32 +766,64 @@ function updateCharts(estado, anexos, fechaStr) {
         }
     });
 
-    // 2. ANNEXES CHART (Gráfico de barras)
+    // 2. ANNEXES CHART (Gráfico de Dona Proporcional)
     const ctxAnnexes = document.getElementById('annexesChart').getContext('2d');
+    const TOTAL_ANEXOS = 287;
+    const currentAnexos = parseInt(anexos) || 0;
+    const restAnexos = Math.max(0, TOTAL_ANEXOS - currentAnexos);
+
     charts.annexes = new Chart(ctxAnnexes, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
-            labels: ['Cantidad'],
+            labels: ['Este Documento', 'Resto de Documentos'],
             datasets: [{
-                label: 'Anexos',
-                data: [anexos],
-                backgroundColor: '#E66E0A',
-                borderRadius: 8
+                data: [currentAnexos, restAnexos],
+                backgroundColor: ['#3498DB', '#E0E4EA'],
+                borderWidth: 0,
+                cutout: '70%'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    suggestedMax: Math.max(10, anexos + 5)
-                }
-            },
             plugins: {
-                legend: { display: false }
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) { return " " + context.label + ": " + context.raw + " anexos"; }
+                    }
+                }
             }
-        }
+        },
+        plugins: [{
+            id: 'annexesText',
+            beforeDraw: function(chart) {
+                var width = chart.width,
+                    height = chart.height,
+                    ctx = chart.ctx;
+                
+                ctx.restore();
+                var fontSize = (height / 100).toFixed(2);
+                ctx.font = "bold " + fontSize + "em Montserrat";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = '#2D3436';
+                
+                var text = currentAnexos.toString(),
+                    textX = Math.round((width - ctx.measureText(text).width) / 2),
+                    textY = height / 2.2;
+                
+                ctx.fillText(text, textX, textY);
+                
+                ctx.font = "600 " + (fontSize * 0.4).toFixed(2) + "em Montserrat";
+                ctx.fillStyle = '#636E72';
+                var text2 = "de " + TOTAL_ANEXOS,
+                    text2X = Math.round((width - ctx.measureText(text2).width) / 2),
+                    text2Y = height / 2.2 + (height / 10);
+                
+                ctx.fillText(text2, text2X, text2Y);
+                ctx.save();
+            }
+        }]
     });
 
     // 3. STATUS CHART (Gauge / Velocímetro)
@@ -843,7 +874,7 @@ function updateCharts(estado, anexos, fechaStr) {
                     ctx = chart.ctx;
                 
                 ctx.restore();
-                var fontSize = (height / 80).toFixed(2);
+                var fontSize = (height / 140).toFixed(2);
                 ctx.font = "bold " + fontSize + "em Montserrat";
                 ctx.textBaseline = "middle";
                 ctx.fillStyle = gaugeColors[score-1] || '#2D3436';
@@ -871,4 +902,3 @@ window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
-
