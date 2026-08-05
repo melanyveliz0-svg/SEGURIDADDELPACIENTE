@@ -376,7 +376,7 @@ body {
       <p>Seleccione un documento de la lista para comenzar el análisis.</p>
     </div>
     <!-- MAIN DASHBOARD DATA -->
-    <div id="dashboard-data" class="dashboard-data" style="display: none;">
+    <div id="dashboard-data" class="dashboard-data hidden">
       
       <div class="doc-header">
         <h2 id="doc-title" class="doc-title">Cargando...</h2>
@@ -782,7 +782,8 @@ function selectDocument(index) {
 }
 
 function updateUI() {
-    // Update Area Icon
+    // Update Title & Area Icon
+    docTitleEl.textContent = currentDoc.DESCRIPCION || currentDoc.DOCUMENTO;
     const area = (currentDoc.AREA || 'SIN ÁREA').trim();
     docAreaBadgeEl.textContent = area;
     
