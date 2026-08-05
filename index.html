@@ -193,14 +193,24 @@ body {
   flex-direction: column;
 }
 .welcome-box {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 3rem;
-  text-align: center;
-  box-shadow: var(--shadow);
-  color: var(--text-muted);
-  font-weight: 500;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
   margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+.overview-chart-large,
+.overview-chart-small {
+  width: 100%;
+  height: auto;
 }
 
 .dashboard-data {
@@ -422,10 +432,31 @@ body {
   <section class="main-content">
     
     <div id="welcome-message" class="welcome-box">
-      <h2 style="color: #34495E; margin-bottom: 1rem;">Línea de Tiempo de Documentación</h2>
-      <p style="color: #7F8C8D; margin-bottom: 2rem;">Evolución temporal del ingreso de documentos al Sistema de Gestión de Calidad.</p>
-      <div style="position: relative; height: 350px; width: 100%;">
-        <canvas id="timelineChart"></canvas>
+      <!-- Full width for timeline -->
+      <div class="overview-chart-large visual-widget">
+        <h2 style="color: var(--primary-dark); margin-bottom: 0.5rem;">Línea de Tiempo de Documentación</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 500;">Evolución temporal del ingreso de documentos al Sistema de Gestión de Calidad.</p>
+        <div style="position: relative; height: 350px; width: 100%;">
+          <canvas id="timelineChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="overview-grid">
+        <!-- Fases Totales de Revisión -->
+        <div class="overview-chart-small visual-widget">
+           <h3 class="widget-title" style="margin-bottom: 1rem;">Fases Totales de Revisión</h3>
+           <div style="position: relative; height: 280px; width: 100%;">
+             <canvas id="overviewStatusChart"></canvas>
+           </div>
+        </div>
+
+        <!-- Anexos por documento -->
+        <div class="overview-chart-small visual-widget">
+           <h3 class="widget-title" style="margin-bottom: 1rem;">Cantidad de Anexos por Documento</h3>
+           <div style="position: relative; height: 280px; width: 100%;">
+             <canvas id="overviewAnnexesChart"></canvas>
+           </div>
+        </div>
       </div>
     </div>
     <!-- MAIN DASHBOARD DATA -->
@@ -814,6 +845,8 @@ function init() {
     renderDocList();
     renderGlobalChart();
     renderTimelineChart();
+    renderOverviewStatusChart();
+    renderOverviewAnnexesChart();
 }
 
 function renderGlobalChart() {
@@ -853,7 +886,7 @@ function renderGlobalChart() {
 }
 
 function renderTimelineChart() {
-    const timelineCounts = {};
+    const timelineData = {};
     SGCSP_DATA.forEach(doc => {
         let fechaStr = doc.FECHA || '';
         if (fechaStr && fechaStr.includes('/')) {
@@ -863,15 +896,20 @@ function renderTimelineChart() {
                 let mes = parts[1].padStart(2, '0');
                 let anio = parts[2];
                 let key = `${anio}-${mes}`;
-                timelineCounts[key] = (timelineCounts[key] || 0) + 1;
+                if (!timelineData[key]) {
+                    timelineData[key] = { count: 0, docs: [] };
+                }
+                timelineData[key].count++;
+                timelineData[key].docs.push(doc.DESCRIPCION || doc.DOCUMENTO);
             }
         }
     });
 
-    const sortedKeys = Object.keys(timelineCounts).sort();
-    const data = sortedKeys.map(k => timelineCounts[k]);
+    const sortedKeys = Object.keys(timelineData).sort();
+    const data = sortedKeys.map(k => timelineData[k].count);
+    const docsInfo = sortedKeys.map(k => timelineData[k].docs);
     
-    // Convert keys to readable labels (e.g. "05-2026")
+    // Convert keys to readable labels (e.g. "05/2026")
     const labels = sortedKeys.map(k => {
         let [y, m] = k.split('-');
         return `${m}/${y}`;
@@ -885,11 +923,83 @@ function renderTimelineChart() {
             datasets: [{
                 label: 'Documentos Registrados',
                 data: data,
-                borderColor: '#3498DB',
-                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                borderColor: '#E66E0A',
+                backgroundColor: 'rgba(230, 110, 10, 0.2)',
                 tension: 0.3,
                 fill: true,
-                pointBackgroundColor: '#2980B9'
+                pointBackgroundColor: '#C45C05'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let idx = context.dataIndex;
+                            let docList = docsInfo[idx];
+                            let res = [`Total: ${context.raw}`];
+                            docList.forEach(d => res.push(`• ${d}`));
+                            return res;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 } }
+            }
+        }
+    });
+}
+
+function renderOverviewStatusChart() {
+    const statusCounts = {};
+    SGCSP_DATA.forEach(doc => {
+        let estado = (doc.ESTADO || 'SIN ESTADO').trim().toUpperCase();
+        statusCounts[estado] = (statusCounts[estado] || 0) + 1;
+    });
+
+    const statusOrder = ['ASIGNADO', 'PENDIENTE', 'EN CURSO', 'EN DEFINICIÓN', 'EN DEFINICION', 'EN REVISIÓN', 'EN REVISION', 'EN APROBACIÓN', 'EN APROBACION', 'APROBADO', 'FINALIZADO', 'SIN ESTADO'];
+    const gaugeColors = {
+        'ASIGNADO': '#95A5A6',
+        'PENDIENTE': '#E74C3C',
+        'EN CURSO': '#E67E22',
+        'EN DEFINICIÓN': '#F1C40F', 'EN DEFINICION': '#F1C40F',
+        'EN REVISIÓN': '#3498DB', 'EN REVISION': '#3498DB',
+        'EN APROBACIÓN': '#85C1E9', 'EN APROBACION': '#85C1E9',
+        'APROBADO': '#2ECC71',
+        'FINALIZADO': '#27AE60',
+        'SIN ESTADO': '#BDC3C7'
+    };
+
+    const labels = [];
+    const data = [];
+    const bgColors = [];
+    
+    // Consolidate duplicates like with/without accent
+    const seen = new Set();
+    statusOrder.forEach(st => {
+        const cleanSt = st.replace('Ó', 'O'); // just a simple normalize for the set
+        if (!seen.has(cleanSt) && statusCounts[st]) {
+            seen.add(cleanSt);
+            let count = statusCounts[st];
+            labels.push(st);
+            data.push(count);
+            bgColors.push(gaugeColors[st] || '#BDC3C7');
+        }
+    });
+
+    const ctx = document.getElementById('overviewStatusChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: bgColors,
+                borderRadius: 4
             }]
         },
         options: {
@@ -900,6 +1010,55 @@ function renderTimelineChart() {
             },
             scales: {
                 y: { beginAtZero: true, ticks: { precision: 0 } }
+            }
+        }
+    });
+}
+
+function renderOverviewAnnexesChart() {
+    const annexesData = [];
+    SGCSP_DATA.forEach(doc => {
+        let anexos = parseInt(doc.ANEXOS) || 0;
+        if (anexos > 0) {
+            annexesData.push({
+                name: doc.DESCRIPCION || doc.DOCUMENTO,
+                count: anexos
+            });
+        }
+    });
+
+    annexesData.sort((a, b) => b.count - a.count);
+
+    const labels = annexesData.map(d => d.name);
+    const data = annexesData.map(d => d.count);
+    
+    const colors = ['#E66E0A', '#3498DB', '#2ECC71', '#9B59B6', '#F1C40F', '#E74C3C', '#1ABC9C', '#34495E', '#D35400', '#7F8C8D'];
+    const bgColors = data.map((_, i) => colors[i % colors.length]);
+
+    const ctx = document.getElementById('overviewAnnexesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: bgColors,
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.raw} Anexos`;
+                        }
+                    }
+                }
             }
         }
     });
