@@ -335,7 +335,7 @@ body {
 .gauge-widget .chart-wrapper {
   position: relative;
   width: 100%;
-  height: 150px; /* Reduced height to fit properly */
+  height: 220px; /* Increased height */
   margin: 0 auto;
 }
 
@@ -895,7 +895,7 @@ function updateCharts(estado, score, gaugeColors) {
             maintainAspectRatio: false,
             plugins: {
                 legend: { 
-                    position: 'bottom',
+                    position: 'right',
                     labels: {
                         boxWidth: 12,
                         font: { size: 10 }
@@ -911,19 +911,19 @@ function updateCharts(estado, score, gaugeColors) {
         plugins: [{
             id: 'gaugeText',
             beforeDraw: function(chart) {
-                var width = chart.width,
-                    height = chart.height,
-                    ctx = chart.ctx;
+                var height = chart.height,
+                    ctx = chart.ctx,
+                    chartArea = chart.chartArea;
                 
                 ctx.restore();
-                var fontSize = (height / 120).toFixed(2);
+                var fontSize = (height / 100).toFixed(2);
                 ctx.font = "bold " + fontSize + "em Montserrat";
-                ctx.textBaseline = "middle";
+                ctx.textBaseline = "bottom";
                 ctx.fillStyle = gaugeColors[score-1] || '#2D3436';
                 
                 var text = estado,
-                    textX = Math.round((width - ctx.measureText(text).width) / 2),
-                    textY = height / 1.7; // Posición ideal en el centro del arco vacio
+                    textX = Math.round(chartArea.left + (chartArea.right - chartArea.left - ctx.measureText(text).width) / 2),
+                    textY = chartArea.bottom; // Alineado justo en la base del arco
                 
                 ctx.fillText(text, textX, textY);
                 ctx.save();
