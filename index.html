@@ -223,6 +223,7 @@ body {
 /* MAIN CONTENT HEADER (Title & Area) */
 .doc-header {
   margin-bottom: 2.5rem;
+  padding-top: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid var(--border);
   text-align: center;
@@ -279,7 +280,7 @@ body {
   box-shadow: var(--shadow);
   text-align: center;
   border: 1px solid var(--border);
-  height: 100%;
+  aspect-ratio: 1 / 1; /* Makes the widget a perfect square */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1033,15 +1034,13 @@ function updateCharts(estado, score, gaugeColors) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            events: [], // Disable hover events to fix zooming/jumping
+            layout: {
+                padding: { bottom: 40 } // Space for the text below the gauge
+            },
             plugins: {
-                legend: { 
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) { return " " + context.label; }
-                    }
-                }
+                legend: { display: false },
+                tooltip: { enabled: false }
             }
         },
         plugins: [{
@@ -1054,31 +1053,15 @@ function updateCharts(estado, score, gaugeColors) {
                 
                 ctx.restore();
                 
-                // --- 1. DIBUJAR TEXTO ---
-                var fontSize = (height / 100).toFixed(2);
-                ctx.font = "bold " + fontSize + "em Montserrat";
-                ctx.textBaseline = "bottom";
-                ctx.fillStyle = gaugeColors[score-1] || '#2D3436';
-                
-                var text = estado,
-                    textX = Math.round(chartArea.left + (chartArea.right - chartArea.left - ctx.measureText(text).width) / 2),
-                    textY = chartArea.bottom - (height * 0.05); 
-                
-                ctx.fillText(text, textX, textY);
-                
-                // --- 2. DIBUJAR FLECHA (NEEDLE) ---
+                // --- 1. DIBUJAR FLECHA (NEEDLE) ---
                 var centerX = chartArea.left + (chartArea.right - chartArea.left) / 2;
-                var centerY = chartArea.bottom;
+                var centerY = chartArea.bottom; // Centro del arco (base)
                 
                 // Total angle is 180 degrees (from -PI to 0).
-                // 7 sections. So each section is PI / 7.
-                // The angle for a score (1 to 7) is in the middle of its section.
                 var sectionAngle = Math.PI / 7;
-                // Since it draws from left to right (-PI to 0):
                 var angle = -Math.PI + (sectionAngle * (score - 1)) + (sectionAngle / 2);
                 
-                // Dimensiones de la aguja
-                var needleRadius = height * 0.45;
+                var needleRadius = height * 0.55; // Aguja un poco más larga
                 var baseWidth = 8;
                 
                 ctx.translate(centerX, centerY);
@@ -1098,7 +1081,23 @@ function updateCharts(estado, score, gaugeColors) {
                 ctx.fillStyle = '#2C3E50';
                 ctx.fill();
                 
+                ctx.restore();
+                
+                // --- 2. DIBUJAR TEXTO ---
+                // Se dibuja DEBAJO de la base del velocímetro, en el espacio del padding
                 ctx.save();
+                var fontSize = (height / 80).toFixed(2);
+                if (fontSize < 1) fontSize = 1; // Min font size
+                ctx.font = "bold " + fontSize + "em Montserrat";
+                ctx.textBaseline = "top"; // Top alignment since we are putting it below
+                ctx.fillStyle = gaugeColors[score-1] || '#2D3436';
+                
+                var text = estado,
+                    textX = Math.round(centerX - (ctx.measureText(text).width / 2)),
+                    textY = centerY + 15; // 15px below the center
+                
+                ctx.fillText(text, textX, textY);
+                ctx.restore();
             }
         }]
     });
