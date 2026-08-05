@@ -988,9 +988,7 @@ function updateUI() {
 
     kpiAnexosEl.textContent = currentDoc.ANEXOS || '0';
     
-    // Status text update
-    const statusTextEl = document.getElementById('status-text-display');
-    
+
     // Configurar Estado
     const estado = (currentDoc.ESTADO || '').trim().toUpperCase();
     
@@ -1013,6 +1011,7 @@ function updateCharts(estado, score, gaugeColors) {
     // 1. STATUS CHART (Gauge / Velocímetro)
     
     // Update the HTML text element
+    const statusTextEl = document.getElementById('status-text-display');
     if (statusTextEl) {
         statusTextEl.textContent = estado;
         statusTextEl.style.color = gaugeColors[score - 1] || '#34495E';
