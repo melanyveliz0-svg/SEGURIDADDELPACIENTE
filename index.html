@@ -438,6 +438,16 @@ body {
   <section class="main-content">
     
     <div id="welcome-message" class="welcome-box">
+      <!-- Progress Bar KPI -->
+      <div class="overview-chart-large visual-widget progress-widget" style="min-height: auto;">
+        <h2 style="color: var(--primary-dark); margin-bottom: 0.5rem; text-transform: uppercase;">Avance Global del Sistema</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 500;">Porcentaje de documentos en estado FINALIZADO o APROBADO respecto al total.</p>
+        <div class="progress-track" style="width: 100%; height: 30px; background: var(--border); border-radius: 20px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="progress-fill" id="global-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #F1C40F, #2ECC71); transition: width 1s ease-in-out;"></div>
+        </div>
+        <h3 id="global-progress-text" style="color: var(--primary-dark); margin-top: 1rem; font-weight: 800; font-size: 1.8rem;">Cargando...</h3>
+      </div>
+
       <!-- Full width for timeline -->
       <div class="overview-chart-large visual-widget">
         <h2 style="color: var(--primary-dark); margin-bottom: 0.5rem;">Línea de Tiempo de Documentación</h2>
@@ -461,6 +471,14 @@ body {
            <h3 class="widget-title" style="margin-bottom: 1rem;">Cantidad de Anexos por Documento</h3>
            <div style="position: relative; height: 280px; width: 100%;">
              <canvas id="overviewAnnexesChart"></canvas>
+           </div>
+        </div>
+
+        <!-- Carga por Áreas -->
+        <div class="overview-chart-small visual-widget">
+           <h3 class="widget-title" style="margin-bottom: 1rem;">Distribución de Carga por Áreas</h3>
+           <div style="position: relative; height: 280px; width: 100%;">
+             <canvas id="overviewAreasChart"></canvas>
            </div>
         </div>
       </div>
@@ -853,6 +871,72 @@ function init() {
     renderTimelineChart();
     renderOverviewStatusChart();
     renderOverviewAnnexesChart();
+    renderOverviewAreasChart();
+    renderGlobalProgress();
+}
+
+function renderGlobalProgress() {
+    let total = SGCSP_DATA.length;
+    let completed = 0;
+    SGCSP_DATA.forEach(doc => {
+        let estado = (doc.ESTADO || '').trim().toUpperCase();
+        if (estado === 'FINALIZADO' || estado === 'APROBADO') {
+            completed++;
+        }
+    });
+    
+    let percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+    
+    const fillEl = document.getElementById('global-progress-fill');
+    const textEl = document.getElementById('global-progress-text');
+    
+    if (fillEl && textEl) {
+        setTimeout(() => {
+            fillEl.style.width = percentage + '%';
+            textEl.textContent = `${percentage}% Completado (${completed}/${total} Documentos)`;
+        }, 300);
+    }
+}
+
+function renderOverviewAreasChart() {
+    const areaCounts = {};
+    SGCSP_DATA.forEach(doc => {
+        let areaString = (doc.AREA || 'SIN ÁREA').trim();
+        const areaList = areaString.split(/,| Y /i).map(a => a.trim().toUpperCase()).filter(a => a.length > 0);
+        
+        areaList.forEach(a => {
+            areaCounts[a] = (areaCounts[a] || 0) + 1;
+        });
+    });
+
+    const sortedAreas = Object.keys(areaCounts).map(k => ({ area: k, count: areaCounts[k] })).sort((a, b) => b.count - a.count);
+    
+    const labels = sortedAreas.map(d => d.area);
+    const data = sortedAreas.map(d => d.count);
+    
+    const ctx = document.getElementById('overviewAreasChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: '#3498DB',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { beginAtZero: true, ticks: { precision: 0 } }
+            }
+        }
+    });
 }
 
 function renderGlobalChart() {
