@@ -433,7 +433,7 @@ body {
     <!-- Global Chart in Sidebar -->
     <div class="sidebar-widget" style="padding: 1.5rem;">
       <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center; font-weight: 700; text-transform: uppercase;">Tipos de Documento</h3>
-      <div style="position: relative; height: 260px; width: 100%;">
+      <div style="position: relative; height: 300px; width: 100%;">
         <canvas id="typeChart"></canvas>
       </div>
     </div>
@@ -444,8 +444,8 @@ body {
     
     <div id="welcome-message" class="welcome-box">
       <!-- Progress Bar KPI -->
-      <div class="overview-chart-large visual-widget progress-widget" style="min-height: auto;">
-        <h2 style="color: var(--primary-dark); margin-bottom: 0.5rem; text-transform: uppercase;">Avance Global del Sistema</h2>
+      <div class="overview-chart-large visual-widget progress-widget" style="min-height: auto; margin-top: 0; padding-top: 1.5rem;">
+        <h2 style="color: var(--primary-dark); margin-top: 0; margin-bottom: 0.5rem; text-transform: uppercase;">Avance Global del Sistema</h2>
         <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 500;">Porcentaje de documentos en estado FINALIZADO o APROBADO respecto al total.</p>
         <div class="progress-track" style="width: 100%; height: 20px; background: var(--border); border-radius: 20px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
           <div class="progress-fill" id="global-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #F1C40F, #2ECC71); transition: width 1s ease-in-out;"></div>
@@ -518,14 +518,14 @@ body {
   <aside class="sidebar right-sidebar">
     <div class="sidebar-widget" style="padding: 1.5rem;">
       <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center; font-weight: 700; text-transform: uppercase;">Fases Totales de Revisión</h3>
-      <div style="position: relative; height: 260px; width: 100%;">
+      <div style="position: relative; height: 300px; width: 100%;">
         <canvas id="overviewStatusChart"></canvas>
       </div>
     </div>
 
     <div class="sidebar-widget" style="padding: 1.5rem;">
       <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center; font-weight: 700; text-transform: uppercase;">Anexos por Documento</h3>
-      <div style="position: relative; height: 260px; width: 100%;">
+      <div style="position: relative; height: 300px; width: 100%;">
         <canvas id="overviewAnnexesChart"></canvas>
       </div>
     </div>
