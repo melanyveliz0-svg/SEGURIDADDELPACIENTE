@@ -130,16 +130,20 @@ body {
   gap: 2rem;
 }
 
-/* SIDEBAR */
 .sidebar {
   width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  flex-shrink: 0;
+}
+.sidebar-widget {
   background: var(--bg-sidebar);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  flex-shrink: 0;
 }
 .sidebar-header {
   padding: 1.5rem;
@@ -414,29 +418,24 @@ body {
 
 <main class="dashboard-container">
   <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>Documentación</h2>
-      <p>Seleccione un documento para visualizar sus detalles.</p>
-    </div>
-    <div class="sidebar-content">
-      <select id="document-select" class="doc-select">
-        <option value="" disabled selected>Seleccione un documento...</option>
-      </select>
-
-      <!-- Global Chart in Sidebar -->
-      <div class="global-stats-container" style="margin-top: 2.5rem; background: #fff; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-        <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center;">Tipos de Documento</h3>
-        <div style="position: relative; height: 200px; width: 100%;">
-          <canvas id="typeChart"></canvas>
-        </div>
+  <aside class="sidebar left-sidebar">
+    <div class="sidebar-widget">
+      <div class="sidebar-header">
+        <h2>Documentación</h2>
+        <p>Seleccione un documento para visualizar sus detalles.</p>
       </div>
+      <div class="sidebar-content">
+        <select id="document-select" class="doc-select">
+          <option value="" disabled selected>Seleccione un documento...</option>
+        </select>
+      </div>
+    </div>
 
-      <div class="global-stats-container" style="margin-top: 1.5rem; background: #fff; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-        <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center; font-weight: 700; text-transform: uppercase;">Fases Totales de Revisión</h3>
-        <div style="position: relative; height: 200px; width: 100%;">
-          <canvas id="overviewStatusChart"></canvas>
-        </div>
+    <!-- Global Chart in Sidebar -->
+    <div class="sidebar-widget" style="padding: 1.5rem;">
+      <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center; font-weight: 700; text-transform: uppercase;">Tipos de Documento</h3>
+      <div style="position: relative; height: 200px; width: 100%;">
+        <canvas id="typeChart"></canvas>
       </div>
     </div>
   </aside>
@@ -465,14 +464,6 @@ body {
       </div>
       
       <div class="overview-grid">
-        <!-- Anexos por documento -->
-        <div class="overview-chart-small visual-widget">
-           <h3 class="widget-title" style="margin-bottom: 1rem;">Cantidad de Anexos por Documento</h3>
-           <div style="position: relative; height: 280px; width: 100%;">
-             <canvas id="overviewAnnexesChart"></canvas>
-           </div>
-        </div>
-
         <!-- Carga por Áreas -->
         <div class="overview-chart-small visual-widget">
            <h3 class="widget-title" style="margin-bottom: 1rem;">Distribución de Carga por Áreas</h3>
@@ -524,6 +515,22 @@ body {
       </div>
     </div>
   </section>
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar right-sidebar">
+    <div class="sidebar-widget" style="padding: 1.5rem;">
+      <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center; font-weight: 700; text-transform: uppercase;">Fases Totales de Revisión</h3>
+      <div style="position: relative; height: 200px; width: 100%;">
+        <canvas id="overviewStatusChart"></canvas>
+      </div>
+    </div>
+
+    <div class="sidebar-widget" style="padding: 1.5rem;">
+      <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #34495E; text-align: center; font-weight: 700; text-transform: uppercase;">Anexos por Documento</h3>
+      <div style="position: relative; height: 200px; width: 100%;">
+        <canvas id="overviewAnnexesChart"></canvas>
+      </div>
+    </div>
+  </aside>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
